@@ -2,12 +2,14 @@
 # encoding: utf=8
 
 from flask import Flask
+from flask.ext.cors import CORS
 from flask import request
 from flask import jsonify
 from google import search as google_search
 
 STORE_STRINGS = ['bandcamp', 'boomkat', 'bleep', 'itunes']
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/search')
 def search():

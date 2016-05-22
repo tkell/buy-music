@@ -3,6 +3,7 @@
 
 from flask import Flask
 from flask import request
+from flask import jsonify
 from google import search as google_search
 
 STORE_STRINGS = ['bandcamp', 'boomkat', 'bleep', 'itunes']
@@ -21,5 +22,7 @@ def search():
         res = google_search(search_string)
         urls.append((store_string, res.next()))
 
-    return urls
+    return jsonify(urls)
 
+if __name__ == '__main__':
+    app.run()

@@ -5,11 +5,15 @@ from flask import Flask
 from flask.ext.cors import CORS
 from flask import request
 from flask import jsonify
+
 from google import search as google_search
+
+import spotipy
+import spotipy.util as util
 
 app = Flask(__name__)
 CORS(app)
-
+    
 @app.route('/search')
 def search():
     '''
@@ -27,7 +31,7 @@ def search_by_playlist():
     Takes a Spotify playlist URI, and searches for each track
     '''
     playlist_uri= request.args.get('playlist_uri', '')
-    urls = _search_by_playlist(playlist_uri_
+    urls = _search_by_playlist(playlist_uri)
 
     return jsonify(urls)
 

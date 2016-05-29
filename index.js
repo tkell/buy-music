@@ -1,5 +1,5 @@
-
 var server = 'http://wombat.com'
+
 var getUrls = function() {
     var artist = $('#artist').val();
     var title = $('#title').val();

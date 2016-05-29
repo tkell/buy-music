@@ -23,7 +23,7 @@ def search():
     title = request.args.get('title', '')
     urls = _search_by_artist_and_title(artist, title)
 
-    return jsonify(urls)
+    return jsonify(**{'data': urls})
 
 @app.route('/search-by-playlist')
 def search_by_playlist():
@@ -50,11 +50,11 @@ def _search_by_artist_and_title(artist, title):
     Searches for artist - title <store>
     '''
     urls = []
-    store_strings = ['bandcamp', 'boomkat', 'bleep', 'itunes']
+    store_strings = ['bandcamp', 'boomkat', 'bleep', 'itunes', '']
     for store_string in store_strings:
         search_string = '%s - %s %s' % (artist, title, store_string)
         res = google_search(search_string)
-        urls.append((store_string, res.next()))
+        urls.append({'site': store_string, 'url': res.next()})
 
     return urls
 

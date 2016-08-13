@@ -98,9 +98,11 @@ app.get('/callback', function(req, res) {
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
-        var access_token = body.access_token,
-            refresh_token = body.refresh_token;
+        var access_token = body.access_token;
+        var refresh_token = body.refresh_token;
 
+        // This goes to hitting the playlists endpoint, instead of /me
+        // we'll then need some shitty state stuff, yay javascript
         var options = {
           url: 'https://api.spotify.com/v1/me',
           headers: { 'Authorization': 'Bearer ' + access_token },
@@ -109,15 +111,19 @@ app.get('/callback', function(req, res) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
+          console.log("yes");
+          // this is where the actual data comes back
           console.log(body);
         });
 
         // we can also pass the token to the browser to make requests from there
+        // Why do we have to do this?
         res.redirect('/#' +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
           }));
+
       } else {
         res.redirect('/#' +
           querystring.stringify({

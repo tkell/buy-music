@@ -13,7 +13,7 @@ var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
 fs = require("fs")
-var fileName = "secret-config.json"
+var fileName = "./secret-config.json"
 
 try {
       config = require(fileName)
@@ -25,7 +25,7 @@ catch (err) {
 
 var client_id = config.clientId // Your client id
 var client_secret = config.clientSecret; // Your secret
-var redirect_uri = 'REDIRECT_URI'; // Your redirect uri
+var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters

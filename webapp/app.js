@@ -20,7 +20,7 @@ try {
 }
 catch (err) {
   config = {}
-  console.log("unable to read file '" + fileName + "': ", err)
+  console.log("unable to read secrets file '" + fileName + "': ", err)
 }
 
 var client_id = config.clientId // Your client id
@@ -55,7 +55,7 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email';
+  var scope = 'playlist-read-private';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -104,7 +104,7 @@ app.get('/callback', function(req, res) {
         // This goes to hitting the playlists endpoint, instead of /me
         // we'll then need some shitty state stuff, yay javascript
         var options = {
-          url: 'https://api.spotify.com/v1/me',
+          url: 'https://api.spotify.com/v1/me/playlists',
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         };
@@ -113,7 +113,30 @@ app.get('/callback', function(req, res) {
         request.get(options, function(error, response, body) {
           console.log("yes");
           // this is where the actual data comes back
-          console.log(body);
+          var targetPlaylist = {};
+          body.items.forEach(function(playlist) {
+              if (playlist.name == "The Cash Money Jam List") {
+                  targetPlaylist = playlist;
+              }
+          });
+          
+          // Set up new request
+          tracksUrl = targetPlaylist.tracks.href
+          var options = {
+            url: tracksUrl,
+            headers: { 'Authorization': 'Bearer ' + access_token },
+            json: true
+          };
+
+          request.get(options, function(error, response, body) {
+            body.items.forEach(function(t) {
+                var artist = t.track.artists[0].name;
+                var track = t.track.name;
+                var album = t.track.album.name;
+                console.log(artist + " - " + track + " -- " + album);
+            });
+          });
+
         });
 
         // we can also pass the token to the browser to make requests from there

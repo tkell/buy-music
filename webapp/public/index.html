@@ -27,7 +27,8 @@
         </div>
         <div id="oauth">
         </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+        <div id="track">
+        </div>
       </div>
     </div>
 
@@ -51,12 +52,11 @@
       </div>
     </script>
 
-    <script id="oauth-template" type="text/x-handlebars-template">
-      <h2>oAuth info</h2>
-      <dl class="dl-horizontal">
-        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
-        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}></dd>
-      </dl>
+    <script id="track-template" type="text/x-handlebars-template">
+      <h2>The First 100 Tracks</h2>
+      {{#each tracks}}
+          <li>{{artist}} - {{track}} -- {{album}}  <button>Click Here To Search</button></li>
+      {{/each}}
     </script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
@@ -82,9 +82,9 @@
             userProfileTemplate = Handlebars.compile(userProfileSource),
             userProfilePlaceholder = document.getElementById('user-profile');
 
-        var oauthSource = document.getElementById('oauth-template').innerHTML,
-            oauthTemplate = Handlebars.compile(oauthSource),
-            oauthPlaceholder = document.getElementById('oauth');
+        var trackSource= document.getElementById('track-template').innerHTML,
+            trackTemplate = Handlebars.compile(trackSource),
+            trackPlaceholder = document.getElementById('track');
 
         var params = getHashParams();
 
@@ -96,18 +96,6 @@
           alert('There was an error during the authentication');
         } else {
           if (access_token) {
-            console.log("yes, really here");
-
-            // render oauth info
-            oauthPlaceholder.innerHTML = oauthTemplate({
-              access_token: access_token,
-              refresh_token: refresh_token
-            });
-            // my stuff actually goes here, yes yes yes.
-            var options = {
-              json: true
-            };
-
             // use the access token to access the Spotify Web API
             $.ajax({
               url: 'https://api.spotify.com/v1/me/playlists',
@@ -134,11 +122,23 @@
                     'Authorization': 'Bearer ' + access_token 
                   },
                   success: function(response) {
+                    var tracks = [];
                     response.items.forEach(function(t) {
                         var artist = t.track.artists[0].name;
                         var track = t.track.name;
                         var album = t.track.album.name;
+                        var trackInfo = 
+                        { 
+                          artist: artist,
+                          track: track,
+                          album: album,
+                          link: "some link",
+                        }
                         console.log(artist + " - " + track + " -- " + album);
+                        tracks.push(trackInfo);
+                    });
+                    trackPlaceholder.innerHTML = trackTemplate({
+                      tracks: tracks,
                     });
                   }
                 });
@@ -149,21 +149,6 @@
               $('#login').show();
               $('#loggedin').hide();
           }
-
-          document.getElementById('obtain-new-token').addEventListener('click', function() {
-            $.ajax({
-              url: '/refresh_token',
-              data: {
-                'refresh_token': refresh_token
-              }
-            }).done(function(data) {
-              access_token = data.access_token;
-              oauthPlaceholder.innerHTML = oauthTemplate({
-                access_token: access_token,
-                refresh_token: refresh_token
-              });
-            });
-          }, false);
         }
       })();
     </script>

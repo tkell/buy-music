@@ -25,7 +25,7 @@
       <div id="loggedin">
         <div id="user-profile">
         </div>
-        <div id="oauth">
+        <div id="results">
         </div>
         <div id="track">
         </div>
@@ -55,7 +55,7 @@
     <script id="track-template" type="text/x-handlebars-template">
       <h2>The First 100 Tracks</h2>
       {{#each tracks}}
-          <li>{{artist}} - {{track}} -- {{album}}  <button>Click Here To Search</button></li>
+          <li id="{{artist}} - {{track}}">{{artist}} - {{track}} -- {{album}}</li>
       {{/each}}
     </script>
 
@@ -134,12 +134,36 @@
                           album: album,
                           link: "some link",
                         }
-                        console.log(artist + " - " + track + " -- " + album);
                         tracks.push(trackInfo);
                     });
                     trackPlaceholder.innerHTML = trackTemplate({
                       tracks: tracks,
                     });
+
+
+                    var search = function(artistAndTitle) {
+                        console.log(artistAndTitle);
+                        var artist = artistAndTitle.split(" - ")[0];
+                        var title = artistAndTitle.split(" - ")[1];
+                        var server = 'http://localhost:5000'
+                        var url = server + '/search?artist=' + artist + '&title=' + title;
+                        console.log(url)
+                        $('#results').html("searching...")
+                        $.get(url, function(res) {
+                            $('#results').html("")
+                            for (var i=0; i< res.data.length; i++) {
+                                var link = res.data[i];
+                                var html = '<a href="' + link.url + '">' + link.site+ '</a><br />'
+                                $('#results').append(html)
+                            }
+                        });
+
+                    }
+
+                    $("li").click(function() {
+                      search(event.target.id);
+                    });
+
                   }
                 });
               }

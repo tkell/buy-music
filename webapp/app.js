@@ -97,48 +97,8 @@ app.get('/callback', function(req, res) {
 
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
-
         var access_token = body.access_token;
         var refresh_token = body.refresh_token;
-
-        // This goes to hitting the playlists endpoint, instead of /me
-        // we'll then need some shitty state stuff, yay javascript
-        var options = {
-          url: 'https://api.spotify.com/v1/me/playlists',
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
-
-        // use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
-          console.log("yes");
-          // this is where the actual data comes back
-          var targetPlaylist = {};
-          body.items.forEach(function(playlist) {
-              if (playlist.name == "The Cash Money Jam List") {
-                  targetPlaylist = playlist;
-              }
-          });
-          
-          // Set up new request
-          tracksUrl = targetPlaylist.tracks.href
-          var options = {
-            url: tracksUrl,
-            headers: { 'Authorization': 'Bearer ' + access_token },
-            json: true
-          };
-
-          request.get(options, function(error, response, body) {
-            body.items.forEach(function(t) {
-                var artist = t.track.artists[0].name;
-                var track = t.track.name;
-                var album = t.track.album.name;
-                console.log(artist + " - " + track + " -- " + album);
-            });
-          });
-
-        });
-
         // we can also pass the token to the browser to make requests from there
         // Why do we have to do this?
         res.redirect('/#' +

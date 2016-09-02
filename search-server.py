@@ -54,7 +54,7 @@ def _search_by_artist_and_title(artist, title):
     for store_string in store_strings:
         search_string = '%s - %s %s' % (artist, title, store_string)
         res = google_search(search_string)
-        urls.append({'site': store_string, 'url': res.next()})
+        urls.append({'site': store_string, 'url': next(res)})
 
     return urls
 

@@ -1,8 +1,1 @@
-What is the best way to structure this?
-
-What, actually, do I want to do?
-
-- Login to Spotify
-- Get a list of my playlists
-- Click on one of them ## everything here can be done in Ember?
-- Get a list of tracks, with buy links. ## we'll do this with my Python app.
+# could always bring itunes back, but ugh.

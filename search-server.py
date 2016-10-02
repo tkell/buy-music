@@ -50,7 +50,7 @@ def _search_by_artist_and_title(artist, title):
     Searches for artist - title <store>
     '''
     urls = []
-    store_strings = ['bandcamp', 'boomkat', 'bleep', 'itunes', '']
+    store_strings = ['bandcamp', 'bleep', 'junodownload', 'amazon',  '']
     for store_string in store_strings:
         search_string = '%s - %s %s' % (artist, title, store_string)
         res = google_search(search_string)

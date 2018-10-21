@@ -124,17 +124,18 @@
                   success: function(response) {
                     var tracks = [];
                     response.items.forEach(function(t) {
-                        var artist = t.track.artists[0].name;
-                        var track = t.track.name;
-                        var album = t.track.album.name;
-                        var trackInfo = 
-                        { 
-                          artist: artist,
-                          track: track,
-                          album: album,
-                          link: "some link",
+                        if (t.track.available_markets && t.track.available_markets.length !== 0) {
+                          var artist = t.track.artists[0].name;
+                          var track = t.track.name;
+                          var album = t.track.album.name;
+                          var trackInfo = {
+                            artist: artist,
+                            track: track,
+                            album: album,
+                            link: "some link",
+                          }
+                          tracks.push(trackInfo);
                         }
-                        tracks.push(trackInfo);
                     });
                     trackPlaceholder.innerHTML = trackTemplate({
                       tracks: tracks,
@@ -142,12 +143,10 @@
 
 
                     var search = function(artistAndTitle) {
-                        console.log(artistAndTitle);
                         var artist = artistAndTitle.split(" - ")[0];
                         var title = artistAndTitle.split(" - ")[1];
                         var server = 'http://localhost:5000'
                         var url = server + '/search?artist=' + artist + '&title=' + title;
-                        console.log(url)
                         $('#results').html("searching...")
                         $.get(url, function(res) {
                             $('#results').html("")
